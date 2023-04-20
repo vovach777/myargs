@@ -1,5 +1,5 @@
 # myargs
-simple arguments parcer
+simple arguments parser
 
 # Мотивация
 Для простых и быстрых эксеприментов потребовались простые решения для парсинга аргументов.
