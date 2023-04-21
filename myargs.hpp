@@ -90,6 +90,12 @@ class Args
       return m.contains(opt);
    }
 
+   bool has(char cmd)
+   {
+      return has(std::string{cmd});
+   }
+
+
    bool has(int cmd)
    {
       return cmd >= 0 && cmd < cmd_nb;
@@ -110,6 +116,22 @@ class Args
       return v;
    }
 
+   template<int v=0>
+   auto get(char opt) -> decltype( m[{opt}], v )
+   {
+      if (has(opt))
+      {
+
+         try {
+            return std::stol( m[{opt}] );
+         } catch(...) {
+
+         }
+      }
+      return v;
+   }
+
+
    template<int v, int lo, int hi, typename T>
    auto get(T&& opt) -> decltype( m[opt], v )
    {
@@ -128,9 +150,7 @@ class Args
    template<typename T, typename Default >
    auto get(T && opt, Default v) -> decltype( m[opt], m[{v}], std::string() )
    {
-      std::string res{ has(opt) ? m[opt] : v};
-      return res; //yep copy
+      return { has(opt) ? m[opt] : v};
    }
-
 };
 }
