@@ -152,5 +152,43 @@ class Args
    {
       return { has(opt) ? m[opt] : v};
    }
+   void create_aliase(std::initializer_list<std::string> il_aliases)
+   {
+      auto aliase_name = *il_aliases.begin();
+      auto&  aliase_value = m[ aliase_name ];
+      bool first=true;
+      if (not aliase_value.empty()) {
+         m[ std::string{"="} + aliase_name  ] = aliase_name;
+         return;
+      }
+      for (auto& v : il_aliases)
+      {
+         if (first) {
+            first=false;
+            continue; //he-he
+         }
+         if (has(v)) {
+            aliase_value = m[v];
+            m[ std::string{"="} + aliase_name  ] = v;
+            return;
+         }
+      }
+
+   }
+
+   template<typename T, typename V>
+   auto if_set(T&&key, V&&value) -> decltype( std::string{key}, std::string{value}, void() )
+   {
+
+      auto& v = m[ { key } ];
+      if (v.empty() )
+         v = {value};
+
+   }
+
 };
+
+
+
 }
+
