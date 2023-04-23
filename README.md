@@ -87,7 +87,7 @@ int main(int argc, char** argv)
 }
 ```
 
-conclusion
+output
 
 ```bush
 >testargs -I/root -a777 -b1000 --include-dir=/usr/local
@@ -106,6 +106,8 @@ none
 /usr/local
 0
 ```
+## try
+try on [godbolt.org](https://godbolt.org/z/vajr5cnvz)
 
 # myargs
 simple arguments parser
@@ -215,3 +217,5 @@ none
 /usr/local
 0
 ```
+## попробуй
+Попробуй на [godbold](https://godbolt.org/z/vajr5cnvz)
