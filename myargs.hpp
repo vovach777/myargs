@@ -24,6 +24,7 @@
  */
 
 #pragma once
+#include <string>
 #include <unordered_map>
 #include <type_traits>
 #include <string_view>
