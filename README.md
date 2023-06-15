@@ -36,7 +36,7 @@ simple arguments parser
 Так же могут иметь значение, но после символа "=":
 
 ```
---alpha=1 --bata=2 --help=compact -incluide-dir=/path
+--alpha=1 --bata=2 --help=compact --incluide-dir=/path
 ```
 
 ### Без префикса
