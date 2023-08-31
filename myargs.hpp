@@ -40,7 +40,7 @@
 namespace myargs {
 using namespace std::literals;
 
-
+#define DUMMY
 template<typename T, typename S>
 auto str(T && obj,S && sep) -> decltype( obj.begin(), obj.end(),   std::declval<std::ostream&>() << std::declval<S>(),  std::string() )
 {
@@ -283,20 +283,20 @@ class Args
 
 
    template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min(), T max=std::numeric_limits<T>::max() )
+   T get(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>::max DUMMY () )
    {
       return get_n_number(opt,0,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
    }
 
 
    template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_last(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min(), T max=std::numeric_limits<T>::max() )
+   T get_last(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>:: max DUMMY () )
    {
       return get_n_number(opt,-1,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
    }
 
    template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_n(K&& opt, int index, T default_v=T(), T min=std::numeric_limits<T>::min(), T max=std::numeric_limits<T>::max() )
+   T get_n(K&& opt, int index, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>::max DUMMY () )
    {
       return get_n_number(opt,index,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
    }
