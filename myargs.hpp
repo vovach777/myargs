@@ -101,7 +101,7 @@ T parse_as(const std::string & sv, T default_v=T() )
    return ss.fail() ? default_v : i;
 }
 
-template<typename K, typename T, typename U=decltype( converter::convert_key( std::declval<K>())),typename Dummy=std::enable_if_t<std::is_arithmetic_v<T>>>
+template<typename K, typename T, typename = decltype( converter::convert_key( std::declval<K>())),typename = std::enable_if_t<std::is_arithmetic_v<T>>>
 void __get_n_number(K&& opt, int index, T default_v, T min, T max );
 
 template<typename K, typename T, typename U=decltype( converter::convert_key( std::declval<K>()), converter::sv(std::declval<T>()))>
@@ -218,20 +218,20 @@ class Args
 
 
 
-   template<typename T, typename U=decltype( converter::convert_key( std::declval<T>()))>
+   template<typename T, typename = decltype( converter::convert_key( std::declval<T>()))>
    auto count(T&&opt)
    {
       return all(opt).size();
    }
 
-   template<typename T, typename U=decltype( converter::convert_key( std::declval<T>()))>
+   template<typename T, typename = decltype( converter::convert_key( std::declval<T>()))>
    bool has(T && opt)
    {
       return count(opt) > 0;
    }
 
 
-   template<typename T, typename U=decltype( converter::convert_key( std::declval<T>()))>
+   template<typename T, typename = decltype( converter::convert_key( std::declval<T>()))>
    bool has(T && opt, int index)
    {
       auto size = count(opt);
@@ -249,7 +249,7 @@ class Args
    }
 
 
-   template<typename T, typename U=decltype( converter::convert_key( std::declval<T>()))>
+   template<typename T, typename = decltype( converter::convert_key( std::declval<T>()))>
    const std::string& str_n(T && opt, int index)
    {
       auto size = count(opt);
@@ -261,65 +261,73 @@ class Args
          return dummy2;
    }
 
-   template<typename T, typename U=decltype( converter::convert_key( std::declval<T>()))>
+   template<typename T, typename = decltype( converter::convert_key( std::declval<T>()))>
    const std::string& last(T&&key)
    {
       return str_n(key,-1);
    }
 
 
-   template<typename K, typename T, typename U=decltype( converter::convert_key( std::declval<K>())),typename Dummy=std::enable_if_t<std::is_arithmetic_v<T>>  >
+   template<typename T, typename K, typename = decltype( converter::convert_key( std::declval<K>())),typename =std::enable_if_t<std::is_arithmetic_v<T>> >
    T get_n_number(K&& opt, int index, T default_v, T min, T max )
    {
-      return std::clamp<T>( parse_as<T>( str_n(opt,index), std::forward<T>(default_v) ), min, max);
+      return std::clamp<T>( parse_as<T>( str_n(std::forward<K>(opt),index), default_v), min, max);
    }
 
-   template<typename K, typename T, typename U=decltype( converter::convert_key( std::declval<K>()), converter::sv(std::declval<T>()))  >
+   template<typename T, typename K, typename = decltype( converter::convert_key( std::declval<K>()), converter::sv(std::declval<T>()))  >
    std::string_view get_n_str(K&& opt, int index, T default_v)
    {
-      auto & v  =  str_n(opt,index);
+      auto & v  =  str_n( std::forward<K>(opt),index);
       return converter::sv( &v == &dummy2 ? default_v : v );
    }
 
 
-   template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>::max DUMMY () )
+   template<typename T,typename T_, typename T__, typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
+   T get(K&& opt, T default_v=T{}, T_ min=static_cast<T_>(std::numeric_limits<T>::min DUMMY ()),
+                                   T__ max=static_cast<T__>(std::numeric_limits<T>::max DUMMY () ))
    {
-      return get_n_number(opt,0,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
+      return get_n_number<T>(std::forward<K>(opt),0,default_v,min,max);
    }
 
 
-   template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_last(K&& opt, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>:: max DUMMY () )
+   template<typename T,typename T_, typename T__, typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
+   T get_last(K&& opt, T default_v=T{}, T_ min=static_cast<T_>(std::numeric_limits<T>::min DUMMY ()),
+                                   T__ max=static_cast<T__>(std::numeric_limits<T>::max DUMMY () ))
    {
-      return get_n_number(opt,-1,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
+      return get_n_number<T>(std::forward<K>(opt),-1,default_v,min,max);
    }
 
-   template<typename K, typename T=int, typename U=decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_n(K&& opt, int index, T default_v=T(), T min=std::numeric_limits<T>::min DUMMY (), T max=std::numeric_limits<T>::max DUMMY () )
+      template<typename T,typename T_, typename T__, typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
+   T get_n(K&& opt, int index, T default_v=T{}, T_ min=static_cast<T_>(std::numeric_limits<T>::min DUMMY ()),
+                                   T__ max=static_cast<T__>(std::numeric_limits<T>::max DUMMY () ))
+
    {
-      return get_n_number(opt,index,std::forward<T>(default_v),std::forward<T>(min),std::forward<T>(max));
+      return get_n_number<T>(std::forward<K>(opt),index,default_v,min,max);
    }
 
+   template <typename K, typename = decltype( converter::convert_key( std::declval<K>()))>
+   int64_t get(K&& opt) {
+      return get<int64_t>( std::forward<K>(opt) );
+   }
 
-   template<typename K, typename T, typename U=decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
+   template<typename T, typename K, typename = decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
    std::string_view get(K&& opt, T && default_v)
    {
 
-      return get_n_str(opt,0,default_v);
+      return get_n_str(std::forward<K>(opt),0,std::forward<T>(default_v));
    }
 
 
-   template<typename K, typename T, typename U=decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
+   template<typename T, typename K, typename = decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
    std::string_view get_n(K&& opt, int index, T && default_v)
    {
-      return get_n_str(opt,index,default_v);
+      return get_n_str(std::forward<K>(opt),index,std::forwqard<T>(default_v));
    }
 
-   template<typename K, typename T, typename U=decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
+   template<typename T, typename K, typename = decltype( __get_n_str(std::declval<K>(),0, std::declval<T>() ))  >
    std::string_view get_last(K&& opt, T && default_v)
    {
-      return get_n_str(opt,-1,default_v);
+      return get_n_str(std::forward<K>(opt),-1,std::forward<T>(default_v));
    }
 
 
@@ -357,19 +365,19 @@ class Args
    }
    #endif
 
-   template<typename T, typename U=decltype(converter::convert_key(std::declval<T>()))>
+   template<typename T, typename = decltype(converter::convert_key(std::declval<T>()))>
    decltype(auto) real_opt( T&&opt, int index )
    {
-      auto& vec = where[ converter::convert_key(opt)];
+      auto& vec = where[ converter::convert_key(std::forward<T>(opt))];
       return std::as_const( vec[( index<0) ? vec.size()+index : index ] );
 
    }
 
-   template<typename T, typename U=decltype(converter::convert_key(std::declval<T>()))>
+   template<typename T, typename = decltype(converter::convert_key(std::declval<T>()))>
    auto real_opt( T&&opt, std::string& find_s )
    {
 
-      auto&& key = converter::convert_key(opt);
+      const auto& key = converter::convert_key(std::forward<T>(opt));
       auto it = where[ key ].begin();
       auto end = where[key].end();
 
