@@ -399,4 +399,6 @@ class Args
 
 };
 
+inline Args args;
+
 }
