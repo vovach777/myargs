@@ -284,7 +284,7 @@ class Args
 
 
    template<typename T,typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get(K&& opt, T default_v=T{}, T _min=T(std::numeric_limits<T>::min DUMMY ()),
+   T get(K&& opt, T default_v=T{}, T _min=T(std::numeric_limits<T>::lowest()),
                                    T _max=T(std::numeric_limits<T>::max DUMMY () ))
    {
       return get_n_number<T>(std::forward<K>(opt),0,default_v,_min,_max);
@@ -292,14 +292,14 @@ class Args
 
 
    template<typename T,typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_last(K&& opt, T default_v=T{}, T _min=std::numeric_limits<T>::min DUMMY (),
+   T get_last(K&& opt, T default_v=T{}, T _min=std::numeric_limits<T>::lowest(),
                                        T _max=std::numeric_limits<T>::max DUMMY () )
    {
       return get_n_number<T>(std::forward<K>(opt),-1,default_v,_min,_max);
    }
 
       template<typename T, typename K, typename = decltype( __get_n_number(std::declval<K>(),0,T(),T(),T()) )>
-   T get_n(K&& opt, int index, T default_v=T{}, T _min=std::numeric_limits<T>::min DUMMY (),
+   T get_n(K&& opt, int index, T default_v=T{}, T _min=std::numeric_limits<T>::lowest(),
                                    T _max=std::numeric_limits<T>::max DUMMY () )
    {
       return get_n_number<T>(std::forward<K>(opt),index,default_v,_min,_max);
